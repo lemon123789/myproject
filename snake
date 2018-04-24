@@ -1,0 +1,174 @@
+这是我用Python写的一个项目，是建立在pygame模块上的一个小游戏，它是我们小时候玩过的经典游戏——贪吃蛇；
+here is the code：
+#_*_coding:utf-8_*_
+import time,sys,pygame,random
+from pygame.locals import *
+
+#define
+fpsClock=pygame.time.Clock()
+
+screen_size=(640,480)
+screen_width,screen_height=screen_size
+FullScreen=False
+
+pos=[screen_width/2,screen_height/2]
+poslist=[]
+for x in range(5):
+    poslist.append([pos[0],pos[1]-x*10])
+
+direct='down'
+changedirect=direct
+
+red= (200,0,0)
+black= (0,0,0)
+white =(255,255,255)
+gray = (150,150,150)
+green = (0,200,0)
+bright_red = (255,0,0) 
+bright_green = (0,255,0)
+
+dan=[140,310]
+dan_exit=1
+pause=False
+mark=3
+def unpause():
+    global pause
+    pause=False
+def gameover(screen,screen_size):
+    gameoverfont=pygame.font.SysFont('arial',30)
+    text=gameoverfont.render('gameover',True,white,red)
+    x,y=screen_size
+    screen.blit(text, (x/3, y/5))
+    pygame.display.flip()
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        button("restart", 100, 250, 150, 50, green, bright_green,restart)
+        button("Quit",350, 250, 150, 50, red, bright_red,quitgame)
+        pygame.display.update()
+        fpsClock.tick(2)
+        if mark==4:
+            break
+def restart():
+    global mark
+    global poslist
+    global pos
+    mark=4
+    poslist=[]
+    pos=[screen_width/2,screen_height/2]
+    for x in range(5):
+        poslist.append([pos[0],pos[1]-x*10])
+    
+    
+def quitgame():
+    pygame.quit()
+    sys.exit()
+def paused():
+    textfont = pygame.font.SysFont('comicsansms',25)
+    textSurf = textfont.render("pause", True, white)
+    textRect = textSurf.get_rect()
+    textRect.center = ((screen_width/2),(screen_height/5))
+    screen.blit(textSurf, textRect)
+    while pause:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+        #screen.fill(white)
+        button("Continue", 100, 250, 150, 50, green, bright_green,unpause)
+        button("Quit",350, 250, 150, 50, red, bright_red,quitgame)
+        pygame.display.update()
+        fpsClock.tick(15)
+def button (msg, x, y, w, h, ic, ac, action=None):
+    mouse =pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
+    fontcolor=white
+    if x + w > mouse[0] > x and y + h > mouse[1] > y:
+        fontcolor=ac
+        if click[0] == 1 and action != None:
+            action()
+##                if action == "play":
+##                    action()
+##                if action == "quit":
+##                    pygame.quit()
+##                    quit()
+    else:
+        fontcolor=ic
+    textfont = pygame.font.SysFont('comicsansms',25)
+    textSurf = textfont.render(msg, True, fontcolor)
+    textRect = textSurf.get_rect()
+    textRect.center = ( (x+(w/2)), (y+(h/2)))
+    screen.blit(textSurf, textRect)
+pygame.init()
+screen=pygame.display.set_mode(screen_size,RESIZABLE,32)
+while True:
+    for event in pygame.event.get():
+        if event.type== QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type==KEYDOWN:
+            if event.key==K_RIGHT or event.key==K_d:
+                changedirect='right'
+            if event.key==K_LEFT or event.key==K_a:
+                changedirect='left'
+            if event.key==K_UP or event.key==K_w:
+                changedirect='up'
+            if event.key==K_DOWN or event.key==K_s:
+                changedirect='down'
+            if event.key==K_SPACE :
+                pause = True
+                paused()
+            if event.key== K_ESCAPE:
+                pygame.quit()
+                sys.exit()
+                
+            if event.key==K_f:
+                if FullScreen==False:
+                   screen=pygame.display.set_mode((640,480),FULLSCREEN,32)
+                   FullScreen=True
+                else:
+                  screen=pygame.display.set_mode((640,480),0,32)
+        if event.type==VIDEORESIZE:
+            screen_size=event.size
+            screen=pygame.display.set_mode(screen_size,RESIZABLE,32)
+    if dan_exit==0:
+        dan=random.randint(1,64)*10,random.randint(1,48)*10
+        dan_exit=1
+    
+    if changedirect == 'right' and not direct == 'left':
+        direct=changedirect
+    if changedirect == 'left' and not direct == 'right':
+        direct=changedirect
+    if changedirect == 'up' and not direct == 'down':
+        direct=changedirect
+    if changedirect == 'down' and not direct == 'up':
+        direct=changedirect
+        
+    if direct=='up':
+        pos[1]-=10
+    if direct=='down':
+        pos[1]+=10
+    if direct=='left':
+        pos[0]-=10
+    if direct=='right':
+        pos[0]+=10
+        
+    if pos in poslist or pos[0]<0 or pos[0]>640 or pos[1]<0 or pos[1]>480:
+        gameover(screen,screen_size)
+             
+    poslist.insert(0,list(pos))#list很重要，没有的话会导致poslist出错
+    if pos[0]==dan[0] and pos[1]==dan[1]:
+        dan_exit=0
+    else:
+        poslist.pop()
+    screen.fill(black)
+    for snake_pos in poslist:
+        pygame.draw.rect(screen,white,Rect(snake_pos[0],snake_pos[1],10,10))
+    pygame.draw.rect(screen,red,Rect(dan[0],dan[1],10,10))
+    mark=3
+    pygame.display.flip()
+    fpsClock.tick(5)
+
+
