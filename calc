@@ -1,0 +1,147 @@
+这是一个python项目，它是以Tkinter模块为基础编写的一个计算机程序。
+here is the code：
+#_*_coding:utf-8_*_
+from tkinter import *
+
+myfont1=('Arial',20)
+myfont2=('Arial',20)
+
+root = Tk()
+root.title('darkan calculator')
+root.geometry('320x480')
+#设置北京框架
+
+result=StringVar()
+result.set(0)
+result2=StringVar()
+result2.set('')
+
+label1=Label(root,font=myfont1,text="0",wraplength=300,bg="#EEEED1",anchor='se',bd='9',fg='#828282',textvariable=result2)
+label1.place(width=320,height=120)
+
+label2=Label(root,font=('Arial',15),text="0",wraplength=300,bg="#EEEED1",anchor='se',bd='9',fg='#828282',textvariable=result)
+label2.place(y=120,width=320,height=60)
+#显示界面
+
+btnac = Button(root,text = 'AC',font = myfont2,fg = ('#EEEE00'),bd = 0.5,command = lambda : pressSign('ac'))
+btnac.place(y=180,width=80,height=60)
+btnb = Button(root,text = '←',font = myfont2,fg = ('#4F4F4F'),bd = 0.5,command = lambda : pressSign('b'))
+btnb.place(x=80,y=180,width=80,height=60)
+btndivd = Button(root,text = '÷',font = myfont2,fg = ('#4F4F4F'),bd = 0.5,command = lambda : pressSign('/'))
+btndivd.place(x=160,y=180,width=80,height=60)
+btnmul = Button(root,text = '×',font = myfont2,fg = ('#4F4F4F'),bd = 0.5,command = lambda : pressSign('*'))
+btnmul.place(x=240,y=180,width=80,height=60)
+
+btn7 = Button(root,text = '7',font = myfont2,fg = ('#4F4F4F'),bd = 0.5,command = lambda : pressNum('7'))
+btn7.place(y=240,width=80,height=60)
+btn8 = Button(root,text = '8',font = myfont2,fg = ('#4F4F4F'),bd = 0.5,command = lambda : pressNum('8'))
+btn8.place(x=80,y=240,width=80,height=60)
+btn9 = Button(root,text = '9',font = myfont2,fg = ('#4F4F4F'),bd = 0.5,command = lambda : pressNum('9'))
+btn9.place(x=160,y=240,width=80,height=60)
+btnadd = Button(root,text = '＋',font = myfont2,fg = ('#4F4F4F'),bd = 0.5,command = lambda : pressSign('+'))
+btnadd.place(x=240,y=240,width=80,height=60)
+
+btn4 = Button(root,text = '4',font = myfont2,fg = ('#4F4F4F'),bd = 0.5,command = lambda : pressNum('4'))
+btn4.place(y=300,width=80,height=60)
+btn7 = Button(root,text = '5',font = myfont2,fg = ('#4F4F4F'),bd = 0.5,command = lambda : pressNum('5'))
+btn7.place(x=80,y=300,width=80,height=60)
+btn7 = Button(root,text = '6',font = myfont2,fg = ('#4F4F4F'),bd = 0.5,command = lambda : pressNum('6'))
+btn7.place(x=160,y=300,width=80,height=60)
+btn7 = Button(root,text = '－',font = myfont2,fg = ('#4F4F4F'),bd = 0.5,command = lambda : pressSign('-'))
+btn7.place(x=240,y=300,width=80,height=60)
+
+btn1 = Button(root,text = '1',font = myfont2,fg = ('#4F4F4F'),bd = 0.5,command = lambda : pressNum('1'))
+btn1.place(y=360,width=80,height=60)
+btn2 = Button(root,text = '2',font = myfont2,fg = ('#4F4F4F'),bd = 0.5,command = lambda : pressNum('2'))
+btn2.place(x=80,y=360,width=80,height=60)
+btn3 = Button(root,text = '3',font = myfont2,fg = ('#4F4F4F'),bd = 0.5,command = lambda : pressNum('3'))
+btn3.place(x=160,y=360,width=80,height=60)
+btneq = Button(root,text = '=',font = myfont2,bg = ('#EEEE00'),bd = 0.5,command = lambda : pressequal())
+btneq.place(x=240,y=360,width=80,height=120)
+
+btnpel = Button(root,text = '%',font = myfont2,fg = ('#4F4F4F'),bd = 0.5,command = lambda : pressNum('%'))
+btnpel.place(y=420,width=80,height=60)
+btn0 = Button(root,text = '0',font = myfont2,fg = ('#4F4F4F'),bd = 0.5,command = lambda : pressNum('0'))
+btn0.place(x=80,y=420,width=80,height=60)
+btnpoint = Button(root,text = '.',font = myfont2,fg = ('#4F4F4F'),bd = 0.5,command = lambda : pressNum('.'))
+btnpoint.place(x=160,y=420,width=80,height=60)
+
+lists=[]
+equal_mark=0
+ispressNum=False
+ispressSign=False              
+
+def pressNum(num):
+    global lists
+    global ispressSign
+    global equal_mark
+    
+    if equal_mark==1:
+        result.set(0)
+        equal_mark=0
+
+    if ispressSign==False:
+        pass
+    else:
+        result.set(0)
+        ispressSign=False
+
+    oldnum=result.get()
+    if oldnum=='0':
+         result.set(num)
+    else:
+        newnum = oldnum + num
+        result.set(newnum)
+   
+
+def pressSign(sign):
+    global lists
+    global ispressSign
+    global equal_mark
+
+    if equal_mark==1:
+        equal_mark=0
+    
+    num = result.get()
+    if num==0:
+        sign=''
+    lists.append(num)
+    lists.append(sign)
+    result2.set(''.join(lists))
+    ispressSign=True
+
+    if sign=='ac':
+        result.set(0)
+        result2.set("")
+        lists.clear()
+
+    if sign=='b':
+        result.set(num[0:-1])
+        result2.set("")
+        lists.clear()
+
+def pressequal():
+    global lists
+    global ispressSign
+    global equal_mark
+
+    last_num=result.get()
+    lists.append(last_num)
+
+    cStr=''.join(lists)
+
+    endnum=eval(cStr)
+    result.set(endnum)
+    result2.set(cStr)
+    lists.clear()
+    equal_mark=1
+
+root.mainloop()
+
+
+
+
+
+
+
+
